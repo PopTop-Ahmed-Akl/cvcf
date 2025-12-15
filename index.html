@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PopTop | بوب توب للكومبيوتر</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --accent: #3b82f6;
+        }
+        body {
+            font-family: 'Cairo', 'Outfit', sans-serif;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        .dark-mode {
+            background-color: #020617;
+            color: #f8fafc;
+        }
+        .dark-mode .bg-white {
+            background-color: #0f172a !important;
+        }
+        .dark-mode .border-gray-100, .dark-mode .border-gray-200 {
+            border-color: #1e293b !important;
+        }
+        .dark-mode .text-gray-600, .dark-mode .text-gray-500 {
+            color: #94a3b8 !important;
+        }
+        .light-mode {
+            background-color: #f8fafc;
+            color: #0f172a;
+        }
+        .card-dark { 
+            background-color: #0f172a; 
+            border: 1px solid #1e293b; 
+            box-shadow: 0 4px 20px -5px rgba(0,0,0,0.5);
+        }
+        .card-light { 
+            background-color: #ffffff; 
+            border: 1px solid #f1f5f9;
+            box-shadow: 0 4px 20px -5px rgba(0,0,0,0.1);
+        }
+        .dark-mode input, .dark-mode textarea, .dark-mode select {
+            background-color: #1e293b !important;
+            border-color: #334155 !important;
+            color: white !important;
+        }
+        .dark-mode nav {
+            background-color: rgba(2, 6, 23, 0.8) !important;
+            border-color: #1e293b !important;
+        }
+        .glass-nav {
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+        .product-img {
+            aspect-ratio: 1/1;
+            object-fit: cover;
+        }
+        .hidden { display: none !important; }
+        .modal-overlay {
+            background-color: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(4px);
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade { animation: fadeIn 0.4s ease-out forwards; }
+    </style>
+</head>
+<body class="light-mode" id="bodyTag">
+
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full z-50 glass-nav border-b transition-colors duration-300 border-gray-200 dark:border-gray-700 bg-white/80 dark:bg-slate-900/80">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-20 items-center">
+                <div class="flex items-center gap-4">
+                    <div class="text-2xl font-bold tracking-tighter text-blue-600 dark:text-blue-400">PopTop</div>
+                    <div class="hidden sm:block border-r border-gray-300 dark:border-gray-600 h-8 mx-2"></div>
+                    <div class="hidden sm:block">
+                        <p class="text-xs font-semibold uppercase tracking-widest text-gray-500 dark:text-gray-400" id="navSubtitle">لجميع اللابتوب والكومبيوتر</p>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-3">
+                    <button onclick="toggleLanguage()" class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-slate-800 transition-all text-sm font-bold uppercase" id="langToggle">EN</button>
+                    <button onclick="toggleTheme()" class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-slate-800 transition-all">
+                        <i id="themeIcon" class="fas fa-moon"></i>
+                    </button>
+                    <button onclick="toggleAdmin()" id="adminNavBtn" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-all">
+                        <span id="navAdminText">لوحة التحكم</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- App Content Wrapper -->
+    <main class="pt-24 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+        
+        <!-- PUBLIC INTERFACE -->
+        <div id="viewerInterface">
+            <!-- Hero Section -->
+            <header class="text-center py-10 animate-fade">
+                <h1 class="text-4xl md:text-5xl font-extrabold mb-4" id="heroTitle">بوب توب</h1>
+                <p class="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto" id="heroDesc">احنا اقرب حد ليك</p>
+                <div class="mt-8 flex justify-center flex-wrap gap-2" id="categoryTabs">
+                    <!-- Categories injected by JS -->
+                </div>
+            </header>
+
+            <!-- Search Bar -->
+            <div class="max-w-md mx-auto mb-12 animate-fade">
+                <div class="relative">
+                    <input type="text" id="searchInput" oninput="filterProducts()" placeholder="ابحث عن منتج..." class="w-full px-5 py-3 rounded-2xl border bg-white dark:bg-slate-800 border-gray-200 dark:border-slate-700 focus:ring-2 focus:ring-blue-500 outline-none text-right">
+                    <i class="fas fa-search absolute left-4 top-4 text-gray-400"></i>
+                </div>
+            </div>
+
+            <!-- Products Grid -->
+            <div id="productsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                <!-- Products injected by JS -->
+            </div>
+
+            <!-- Empty State -->
+            <div id="emptyState" class="hidden text-center py-20 animate-fade">
+                <i class="fas fa-box-open text-6xl text-gray-300 mb-4"></i>
+                <p class="text-xl text-gray-500" id="emptyMsg">لا توجد منتجات حالياً</p>
+            </div>
+
+            <!-- Go to Feedback Page Button -->
+            <div class="text-center mt-12 animate-fade">
+                <button onclick="showPage('feedbackInterface')" class="bg-gray-100 dark:bg-slate-800 text-blue-600 dark:text-blue-400 px-8 py-4 rounded-2xl font-bold border-2 border-dashed border-blue-400 hover:bg-blue-50 dark:hover:bg-slate-700 transition-all inline-flex items-center gap-2">
+                    <i class="fas fa-comment-dots"></i>
+                    <span id="feedbackBtnText">تقييم الموقع أو الإبلاغ عن مشكلة</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- FEEDBACK INTERFACE (Improved Separate Page) -->
+        <div id="feedbackInterface" class="hidden animate-fade max-w-4xl mx-auto">
+            <div class="mb-10 text-center relative">
+                <button onclick="showPage('viewerInterface')" class="absolute right-0 top-0 flex items-center gap-2 text-blue-600 font-bold hover:translate-x-1 transition-transform">
+                    <i class="fas fa-arrow-right"></i>
+                    <span id="backBtnText">العودة</span>
+                </button>
+                <h2 id="feedbackPageTitle" class="text-4xl font-extrabold mb-2 bg-gradient-to-r from-blue-600 to-blue-400 bg-clip-text text-transparent">تواصل معنا</h2>
+                <p id="feedbackPageDesc" class="text-gray-500">رأيك يهمنا لتحسين خدمات بوب توب</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
+                <!-- Rating Section -->
+                <div class="bg-white dark:bg-slate-800 p-8 rounded-[2rem] border border-blue-50 dark:border-slate-700 shadow-xl shadow-blue-500/5 transition-all hover:shadow-blue-500/10">
+                    <div class="w-14 h-14 bg-blue-100 dark:bg-blue-900/30 rounded-2xl flex items-center justify-center mb-6">
+                        <i class="fas fa-star text-2xl text-blue-600 dark:text-blue-400"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-2" id="rateUsTitle">تقييم الموقع</h3>
+                    <p id="rateUsDesc" class="text-sm text-gray-500 mb-6">كيف كانت تجربتك معنا اليوم؟</p>
+                    
+                    <div class="flex justify-center gap-3 mb-6 bg-gray-50 dark:bg-slate-900/50 p-4 rounded-2xl" id="starRating">
+                        <button onclick="setRating(1)" class="text-3xl text-gray-300 hover:scale-125 transition-all"><i class="fas fa-star"></i></button>
+                        <button onclick="setRating(2)" class="text-3xl text-gray-300 hover:scale-125 transition-all"><i class="fas fa-star"></i></button>
+                        <button onclick="setRating(3)" class="text-3xl text-gray-300 hover:scale-125 transition-all"><i class="fas fa-star"></i></button>
+                        <button onclick="setRating(4)" class="text-3xl text-gray-300 hover:scale-125 transition-all"><i class="fas fa-star"></i></button>
+                        <button onclick="setRating(5)" class="text-3xl text-gray-300 hover:scale-125 transition-all"><i class="fas fa-star"></i></button>
+                    </div>
+                    
+                    <textarea id="rateComment" placeholder="أخبرنا عن رأيك..." class="w-full px-4 py-4 rounded-2xl border-2 border-gray-100 dark:border-slate-700 bg-gray-50 dark:bg-slate-900 focus:border-blue-500 focus:ring-0 outline-none transition-all mb-4 min-h-[120px]"></textarea>
+                    <button onclick="submitReview()" class="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-2xl font-bold shadow-lg shadow-blue-600/20 transition-all w-full flex items-center justify-center gap-2" id="submitReviewBtn">
+                        <i class="fas fa-paper-plane"></i>
+                        <span>إرسال التقييم</span>
+                    </button>
+                </div>
+
+                <!-- Report Section -->
+                <div class="bg-white dark:bg-slate-800 p-8 rounded-[2rem] border border-red-50 dark:border-slate-700 shadow-xl shadow-red-500/5 transition-all hover:shadow-red-500/10">
+                    <div class="w-14 h-14 bg-red-100 dark:bg-red-900/30 rounded-2xl flex items-center justify-center mb-6">
+                        <i class="fas fa-bug text-2xl text-red-600 dark:text-red-400"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-2" id="reportIssueTitle">الإبلاغ عن عطل</h3>
+                    <p id="reportIssueDesc" class="text-sm text-gray-500 mb-6">واجهت مشكلة؟ أخبرنا لنقوم بإصلاحها</p>
+                    
+                    <div class="space-y-4">
+                        <div class="relative">
+                            <i class="fas fa-tag absolute right-4 top-4 text-gray-400 text-sm"></i>
+                            <input type="text" id="issueType" placeholder="نوع العطل..." class="w-full pr-11 pl-4 py-4 rounded-2xl border-2 border-gray-100 dark:border-slate-700 bg-gray-50 dark:bg-slate-900 focus:border-red-500 focus:ring-0 outline-none transition-all">
+                        </div>
+                        <div class="relative">
+                            <i class="fas fa-comment-alt absolute right-4 top-4 text-gray-400 text-sm"></i>
+                            <textarea id="issueDesc" placeholder="اشرح لنا المشكلة بالتفصيل..." class="w-full pr-11 pl-4 py-4 rounded-2xl border-2 border-gray-100 dark:border-slate-700 bg-gray-50 dark:bg-slate-900 focus:border-red-500 focus:ring-0 outline-none transition-all min-h-[120px]"></textarea>
+                        </div>
+                        <button onclick="submitReport()" class="bg-red-600 hover:bg-red-700 text-white px-8 py-4 rounded-2xl font-bold shadow-lg shadow-red-600/20 transition-all w-full flex items-center justify-center gap-2" id="submitReportBtn">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <span>إبلاغ عن مشكلة</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Trust Badge -->
+            <div class="mt-12 text-center p-6 bg-blue-600/5 rounded-3xl border border-blue-100/50 dark:border-slate-700">
+                <p id="trustBadgeTitle" class="text-blue-600 dark:text-blue-400 font-bold mb-1">PopTop | بوب توب</p>
+                <p id="trustBadgeDesc" class="text-xs text-gray-500">نحن نهتم بتطوير خدماتنا من أجلكم دائماً</p>
+            </div>
+        </div>
+
+        <!-- ADMIN INTERFACE -->
+        <div id="adminInterface" class="hidden animate-fade">
+            <div id="adminLogin" class="max-w-md mx-auto py-12">
+                <div class="bg-white dark:bg-slate-800 p-8 rounded-3xl shadow-xl border border-gray-100 dark:border-slate-700">
+                    <h2 class="text-2xl font-bold mb-6 text-center" id="loginTitle">دخول الإدارة</h2>
+                    <input type="password" id="adminPass" placeholder="كلمة المرور" class="w-full px-4 py-3 rounded-xl border mb-4 bg-gray-50 dark:bg-slate-900 border-gray-200 dark:border-slate-700 outline-none">
+                    <button onclick="checkLogin()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl transition-all" id="loginBtn">دخول</button>
+                </div>
+            </div>
+
+            <div id="adminDashboard" class="hidden">
+                <div class="flex flex-col lg:flex-row gap-8">
+                    <!-- Left: Control Panel -->
+                    <div class="w-full lg:w-1/3 space-y-6">
+                        <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700">
+                            <h3 class="text-xl font-bold mb-4" id="addProductTitle">إضافة منتج جديد</h3>
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="block text-sm font-medium mb-1">صورة المنتج</label>
+                                    <input type="file" id="prodImg" accept="image/*" class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
+                                </div>
+                                <input type="text" id="prodName" placeholder="اسم المنتج" class="w-full px-4 py-2 rounded-lg border dark:bg-slate-900 dark:border-slate-700">
+                                <textarea id="prodDesc" placeholder="وصف المنتج" class="w-full px-4 py-2 rounded-lg border dark:bg-slate-900 dark:border-slate-700 h-24"></textarea>
+                                <div class="flex gap-2">
+                                    <select id="prodCat" class="flex-1 px-4 py-2 rounded-lg border dark:bg-slate-900 dark:border-slate-700">
+                                        <!-- Options injected -->
+                                    </select>
+                                    <input type="number" id="prodStock" placeholder="العدد" class="w-24 px-4 py-2 rounded-lg border dark:bg-slate-900 dark:border-slate-700">
+                                </div>
+                                <button onclick="saveProduct()" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded-lg transition-all" id="publishBtn">نشر المنتج</button>
+                            </div>
+                        </div>
+
+                        <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700">
+                            <h3 class="text-xl font-bold mb-4" id="manageAboutTitle">إدارة "عن الموقع"</h3>
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="block text-sm font-medium mb-1">صورة المهندس</label>
+                                    <input type="file" id="aboutPhotoInput" accept="image/*" class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium mb-2" id="usageTitleAdmin">دليل الاستخدام</label>
+                                    <textarea id="usageGuide" placeholder="دليل الاستخدام..." class="w-full px-4 py-2 rounded-lg border dark:bg-slate-900 dark:border-slate-700 h-32"></textarea>
+                                </div>
+                                <button onclick="saveAbout()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-lg" id="saveAboutBtn">حفظ التغييرات</button>
+                            </div>
+                        </div>
+
+                        <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700">
+                            <h3 class="text-xl font-bold mb-4" id="viewReportsTitle">البلاغات والتقييمات</h3>
+                            <div id="adminReportsList" class="space-y-4 max-h-96 overflow-y-auto">
+                                <!-- Reports injected -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right: Product List -->
+                    <div class="w-full lg:w-2/3">
+                        <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700">
+                            <h3 class="text-xl font-bold mb-4" id="currentProductsTitle">المنتجات الحالية</h3>
+                            <div id="adminProductsList" class="space-y-4">
+                                <!-- Admin products injected -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- About Section (Floating Button & Panel) -->
+    <button onclick="toggleAbout()" class="fixed bottom-6 left-6 z-40 bg-blue-600 text-white w-14 h-14 rounded-full shadow-lg flex items-center justify-center hover:scale-110 transition-transform">
+        <i class="fas fa-info-circle text-2xl"></i>
+    </button>
+
+    <div id="aboutPanel" class="fixed inset-y-0 left-0 w-80 z-50 transform -translate-x-full transition-transform duration-300 ease-in-out shadow-2xl bg-white dark:bg-slate-900 p-6 overflow-y-auto">
+        <div class="flex justify-between items-center mb-6">
+            <h2 class="text-2xl font-bold" id="aboutPanelTitle">عن الموقع</h2>
+            <button onclick="toggleAbout()"><i class="fas fa-times text-xl"></i></button>
+        </div>
+        <div class="space-y-6">
+            <img id="displayAboutImg" src="https://placehold.co/600x600?text=Engineer+Photo" class="w-full rounded-2xl shadow-md border-2 border-blue-500/20">
+            <div>
+                <h4 class="font-bold text-lg mb-1">المهندس / أحمد عقل</h4>
+                <p class="text-gray-600 dark:text-gray-400 text-sm">رئيس شركة PopTop للكومبيوتر</p>
+                <p class="text-gray-600 dark:text-gray-400 text-sm mt-1">محمود عقل</p>
+            </div>
+            <div class="pt-4 border-t border-gray-100 dark:border-slate-800">
+                <h4 class="font-bold mb-2" id="usageTitle">كيفية الاستخدام</h4>
+                <div id="displayUsage" class="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">
+                    تصفح الأقسام، اختر المنتج، واضغط على زر واتساب للاستفسار.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Image Modal -->
+    <div id="imageModal" class="fixed inset-0 z-[100] hidden flex items-center justify-center p-4 modal-overlay">
+        <div class="relative max-w-4xl w-full">
+            <button onclick="closeModal()" class="absolute -top-12 right-0 text-white text-3xl">&times;</button>
+            <img id="modalImg" src="" class="w-full max-h-[80vh] object-contain rounded-xl">
+        </div>
+    </div>
+
+    <!-- Back to top -->
+    <button onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="fixed bottom-6 right-6 z-40 bg-gray-200 dark:bg-slate-700 w-12 h-12 rounded-full shadow-md flex items-center justify-center hover:opacity-80 transition-opacity">
+        <i class="fas fa-chevron-up"></i>
+    </button>
+
+    <script>
+        // State Management
+        let products = JSON.parse(localStorage.getItem('poptop_products')) || [];
+        let reviews = JSON.parse(localStorage.getItem('poptop_reviews')) || [];
+        let reports = JSON.parse(localStorage.getItem('poptop_reports')) || [];
+        let tempRating = 0;
+
+        let aboutData = JSON.parse(localStorage.getItem('poptop_about')) || {
+            guide: 'تصفح الأقسام، اختر المنتج، واضغط على زر واتساب للاستفسار عن التفاصيل والتوافر.'
+        };
+        let currentLang = 'ar';
+        let currentCategory = 'all';
+        let isAdmin = false;
+
+        const categories = {
+            ar: ['الكل', 'عروض خاصة', 'أسلاك', 'شاشات', 'كيسات', 'ماوسات', 'كيبوردات', 'شواحن هاتف', 'شواحن لابتوب', 'شنط لابتوب', 'كاميرات', 'هيدفون', 'بادات', 'سماعات', 'دراعات', 'أخرى'],
+            en: ['All', 'Special Offers', 'Cables', 'Screens', 'Cases', 'Mice', 'Keyboards', 'Phone Chargers', 'Laptop Chargers', 'Laptop Bags', 'Cameras', 'Headphones', 'Pads', 'Speakers', 'Gamepads', 'Other']
+        };
+
+        const translations = {
+            ar: {
+                subtitle: "لجميع اللابتوب والكومبيوتر",
+                navAdmin: "لوحة التحكم",
+                navPublic: "تصفح الموقع",
+                heroTitle: "بوب توب",
+                heroDesc: "احنا اقرب حد ليك",
+                searchPlaceholder: "ابحث عن منتج...",
+                emptyMsg: "لا توجد منتجات حالياً",
+                loginTitle: "دخول الإدارة",
+                loginPlaceholder: "كلمة المرور",
+                loginBtn: "دخول",
+                addProductTitle: "إضافة منتج جديد",
+                publishBtn: "نشر المنتج",
+                manageAboutTitle: "إدارة \"عن الموقع\"",
+                saveAboutBtn: "حفظ التغييرات",
+                currentProductsTitle: "المنتجات الحالية",
+                aboutPanelTitle: "عن الموقع",
+                usageTitle: "كيفية الاستخدام",
+                nameLabel: "اسم المنتج",
+                descLabel: "وصف المنتج",
+                catLabel: "الفئة",
+                owner1: "المهندس / أحمد عقل",
+                owner2: "محمود عقل",
+                ownerTitle: "رئيس شركة PopTop للكومبيوتر",
+                whatsappMsg: "بكام السعر؟",
+                stockLabel: "القطع المتوفرة:",
+                stockInput: "عدد القطع",
+                feedbackPageTitle: "تواصل معنا",
+                feedbackPageDesc: "رأيك يهمنا لتحسين خدمات بوب توب",
+                rateUsTitle: "تقييم الموقع",
+                rateUsDesc: "كيف كانت تجربتك معنا اليوم؟",
+                reportIssueTitle: "الإبلاغ عن عطل",
+                reportIssueDesc: "واجهت مشكلة؟ أخبرنا لنقوم بإصلاحها",
+                reviewPlaceholder: "أخبرنا عن رأيك...",
+                issueTypePlaceholder: "نوع العطل...",
+                issueDescPlaceholder: "اشرح لنا المشكلة بالتفصيل...",
+                submitReviewBtn: "إرسال التقييم",
+                submitReportBtn: "إبلاغ عن مشكلة",
+                trustBadgeTitle: "PopTop | بوب توب",
+                trustBadgeDesc: "نحن نهتم بتطوير خدماتنا من أجلكم دائماً",
+                backBtn: "العودة",
+                feedbackBtn: "تقييم الموقع أو الإبلاغ عن مشكلة",
+                // Legacy properties for compatibility
+                rateUs: "تقييم الموقع",
+                reportIssue: "الإبلاغ عن عطل",
+                submit: "إرسال",
+                reportsTitle: "البلاغات والتقييمات"
+            },
+            en: {
+                subtitle: "For all Laptops & Computers",
+                navAdmin: "Admin Dashboard",
+                navPublic: "Public Site",
+                heroTitle: "PopTop",
+                heroDesc: "We are the closest to you",
+                searchPlaceholder: "Search products...",
+                emptyMsg: "No products available currently",
+                loginTitle: "Admin Login",
+                loginPlaceholder: "Password",
+                loginBtn: "Login",
+                addProductTitle: "Add New Product",
+                publishBtn: "Publish Product",
+                manageAboutTitle: "Manage 'About'",
+                saveAboutBtn: "Save Changes",
+                currentProductsTitle: "Current Products",
+                aboutPanelTitle: "About Us",
+                usageTitle: "How to Use",
+                nameLabel: "Product Name",
+                descLabel: "Description",
+                catLabel: "Category",
+                owner1: "Eng. Ahmed Aqel",
+                owner2: "Mahmoud Aqel",
+                ownerTitle: "CEO of PopTop Computers",
+                whatsappMsg: "How much is the price?",
+                stockLabel: "Available Stock:",
+                stockInput: "Stock Quantity",
+                feedbackPageTitle: "Contact Us",
+                feedbackPageDesc: "Your feedback matters to improve PopTop services",
+                rateUsTitle: "Rate Our Website",
+                rateUsDesc: "How was your experience with us today?",
+                reportIssueTitle: "Report a Technical Issue",
+                reportIssueDesc: "Facing a problem? Let us know to fix it",
+                reviewPlaceholder: "Tell us what you think...",
+                issueTypePlaceholder: "Issue type...",
+                issueDescPlaceholder: "Describe the problem in detail...",
+                submitReviewBtn: "Submit Review",
+                submitReportBtn: "Report Problem",
+                trustBadgeTitle: "PopTop | بوب توب",
+                trustBadgeDesc: "We care about improving our services for you always",
+                backBtn: "Back",
+                feedbackBtn: "Rate Site or Report Problem",
+                // Legacy properties for compatibility
+                rateUs: "Rate Our Website",
+                reportIssue: "Report a Technical Issue",
+                submit: "Submit",
+                reportsTitle: "Reports & Reviews"
+            }
+        };
+
+        // Feedback Logic
+        function setRating(n) {
+            tempRating = n;
+            const stars = document.getElementById('starRating').children;
+            for (let i = 0; i < 5; i++) {
+                stars[i].classList.toggle('text-yellow-400', i < n);
+                stars[i].classList.toggle('text-gray-300', i >= n);
+            }
+        }
+
+        function submitReview() {
+            const comment = document.getElementById('rateComment').value;
+            if (tempRating === 0) {
+                alert(currentLang === 'ar' ? 'يرجى اختيار التقييم بالنجوم' : 'Please select a star rating');
+                return;
+            }
+            const review = {
+                id: Date.now(),
+                type: 'review',
+                rating: tempRating,
+                comment,
+                date: new Date().toLocaleString()
+            };
+            reviews.push(review);
+            localStorage.setItem('poptop_reviews', JSON.stringify(reviews));
+            alert(currentLang === 'ar' ? 'شكراً لتقييمك!' : 'Thank you for your review!');
+            document.getElementById('rateComment').value = '';
+            setRating(0);
+        }
+
+        function submitReport() {
+            const type = document.getElementById('issueType').value;
+            const desc = document.getElementById('issueDesc').value;
+            if (!type || !desc) {
+                alert(currentLang === 'ar' ? 'يرجى ملء جميع الحقول' : 'Please fill all fields');
+                return;
+            }
+            const report = {
+                id: Date.now(),
+                type: 'report',
+                issueType: type,
+                desc,
+                date: new Date().toLocaleString()
+            };
+            reports.push(report);
+            localStorage.setItem('poptop_reports', JSON.stringify(reports));
+            alert(currentLang === 'ar' ? 'تم إرسال البلاغ بنجاح' : 'Report sent successfully');
+            document.getElementById('issueType').value = '';
+            document.getElementById('issueDesc').value = '';
+        }
+
+        function renderAdminReports() {
+            const container = document.getElementById('adminReportsList');
+            const all = [...reviews, ...reports].sort((a, b) => b.id - a.id);
+            
+            if (all.length === 0) {
+                container.innerHTML = `<p class="text-sm text-gray-500 text-center py-4">لا توجد بلاغات أو تقييمات</p>`;
+                return;
+            }
+
+            container.innerHTML = all.map(item => `
+                <div class="p-3 rounded-xl border ${item.type === 'report' ? 'border-red-200 bg-red-50 dark:bg-red-900/10' : 'border-yellow-200 bg-yellow-50 dark:bg-yellow-900/10'} text-sm">
+                    <div class="flex justify-between font-bold mb-1">
+                        <span>${item.type === 'report' ? '⚠️ بلاغ عطل' : '⭐ تقييم'}</span>
+                        <span class="text-[10px] opacity-60">${item.date}</span>
+                    </div>
+                    ${item.type === 'report' ? `
+                        <p><strong>النوع:</strong> ${item.issueType}</p>
+                        <p>${item.desc}</p>
+                    ` : `
+                        <p><strong>النجوم:</strong> ${item.rating}/5</p>
+                        <p>${item.comment}</p>
+                    `}
+                    <button onclick="deleteReport(${item.id}, '${item.type}')" class="mt-2 text-xs text-red-600 font-bold">حذف</button>
+                </div>
+            `).join('');
+        }
+
+        function deleteReport(id, type) {
+            if (type === 'review') {
+                reviews = reviews.filter(r => r.id !== id);
+                localStorage.setItem('poptop_reviews', JSON.stringify(reviews));
+            } else {
+                reports = reports.filter(r => r.id !== id);
+                localStorage.setItem('poptop_reports', JSON.stringify(reports));
+            }
+            renderAdminReports();
+        }
+
+        // Initialize App
+        function init() {
+            renderCategories();
+            renderProducts();
+            updateAboutDisplay();
+            updateUIStrings();
+            populateCategorySelect();
+        }
+
+        // UI Updates
+        function updateUIStrings() {
+            const t = translations[currentLang];
+            document.documentElement.lang = currentLang;
+            document.documentElement.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
+            
+            document.getElementById('navSubtitle').innerText = t.subtitle;
+            document.getElementById('navAdminText').innerText = isAdmin ? t.navPublic : t.navAdmin;
+            document.getElementById('heroTitle').innerText = t.heroTitle;
+            document.getElementById('heroDesc').innerText = t.heroDesc;
+            document.getElementById('searchInput').placeholder = t.searchPlaceholder;
+            document.getElementById('emptyMsg').innerText = t.emptyMsg;
+            document.getElementById('loginTitle').innerText = t.loginTitle;
+            document.getElementById('adminPass').placeholder = t.loginPlaceholder;
+            document.getElementById('loginBtn').innerText = t.loginBtn;
+            document.getElementById('addProductTitle').innerText = t.addProductTitle;
+            document.getElementById('publishBtn').innerText = t.publishBtn;
+            document.getElementById('manageAboutTitle').innerText = t.manageAboutTitle;
+            document.getElementById('saveAboutBtn').innerText = t.saveAboutBtn;
+            document.getElementById('currentProductsTitle').innerText = t.currentProductsTitle;
+            document.getElementById('aboutPanelTitle').innerText = t.aboutPanelTitle;
+            document.getElementById('usageTitle').innerText = t.usageTitle;
+            
+            document.getElementById('prodName').placeholder = t.nameLabel;
+            document.getElementById('prodDesc').placeholder = t.descLabel;
+            document.getElementById('prodStock').placeholder = t.stockInput;
+            document.getElementById('usageGuide').placeholder = t.usageTitle;
+
+            // Feedback page translations
+            const feedbackPageTitle = document.getElementById('feedbackPageTitle');
+            const feedbackPageDesc = document.getElementById('feedbackPageDesc');
+            const rateUsDesc = document.getElementById('rateUsDesc');
+            const reportIssueDesc = document.getElementById('reportIssueDesc');
+            const backBtnText = document.getElementById('backBtnText');
+            const feedbackBtnText = document.getElementById('feedbackBtnText');
+            const trustBadgeTitle = document.getElementById('trustBadgeTitle');
+            const trustBadgeDesc = document.getElementById('trustBadgeDesc');
+            
+            if (feedbackPageTitle) feedbackPageTitle.innerText = t.feedbackPageTitle;
+            if (feedbackPageDesc) feedbackPageDesc.innerText = t.feedbackPageDesc;
+            
+            // Update rate us section
+            document.getElementById('rateUsTitle').innerText = t.rateUsTitle;
+            if (rateUsDesc) rateUsDesc.innerText = t.rateUsDesc;
+            document.getElementById('rateComment').placeholder = t.reviewPlaceholder;
+            document.getElementById('submitReviewBtn').innerText = t.submitReviewBtn;
+            
+            // Update report issue section
+            document.getElementById('reportIssueTitle').innerText = t.reportIssueTitle;
+            if (reportIssueDesc) reportIssueDesc.innerText = t.reportIssueDesc;
+            document.getElementById('issueType').placeholder = t.issueTypePlaceholder;
+            document.getElementById('issueDesc').placeholder = t.issueDescPlaceholder;
+            document.getElementById('submitReportBtn').innerText = t.submitReportBtn;
+            
+            // Update back button and feedback button
+            if (backBtnText) backBtnText.innerText = t.backBtn;
+            if (feedbackBtnText) feedbackBtnText.innerText = t.feedbackBtn;
+            
+            // Update trust badge
+            if (trustBadgeTitle) trustBadgeTitle.innerText = t.trustBadgeTitle;
+            if (trustBadgeDesc) trustBadgeDesc.innerText = t.trustBadgeDesc;
+            
+            // Admin reports section
+            document.getElementById('viewReportsTitle').innerText = t.reportsTitle || 'البلاغات والتقييمات';
+
+            // Re-render components with translations
+            renderCategories();
+            populateCategorySelect();
+            renderProducts();
+            if (isAdmin) renderAdminReports();
+        }
+
+        function toggleTheme() {
+            const body = document.getElementById('bodyTag');
+            const icon = document.getElementById('themeIcon');
+            if (body.classList.contains('light-mode')) {
+                body.classList.replace('light-mode', 'dark-mode');
+                icon.classList.replace('fa-moon', 'fa-sun');
+            } else {
+                body.classList.replace('dark-mode', 'light-mode');
+                icon.classList.replace('fa-sun', 'fa-moon');
+            }
+        }
+
+        function toggleLanguage() {
+            currentLang = currentLang === 'ar' ? 'en' : 'ar';
+            document.getElementById('langToggle').innerText = currentLang === 'ar' ? 'EN' : 'AR';
+            updateUIStrings();
+        }
+
+        function showPage(pageId) {
+            const pages = ['viewerInterface', 'adminInterface', 'feedbackInterface'];
+            pages.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.classList.add('hidden');
+            });
+            document.getElementById(pageId).classList.remove('hidden');
+            
+            if (pageId === 'adminInterface' && isAdmin) {
+                document.getElementById('adminLogin').classList.add('hidden');
+                document.getElementById('adminDashboard').classList.remove('hidden');
+            }
+            window.scrollTo({top: 0, behavior: 'smooth'});
+            // Update UI strings to ensure translations are applied
+            updateUIStrings();
+        }
+
+        function toggleAdmin() {
+            const admin = document.getElementById('adminInterface');
+            if (admin.classList.contains('hidden')) {
+                showPage('adminInterface');
+            } else {
+                showPage('viewerInterface');
+            }
+            updateUIStrings();
+        }
+
+        function checkLogin() {
+            const pass = document.getElementById('adminPass').value;
+            if (pass === '151182') {
+                isAdmin = true;
+                document.getElementById('adminLogin').classList.add('hidden');
+                document.getElementById('adminDashboard').classList.remove('hidden');
+                renderAdminProducts();
+                renderAdminReports();
+                updateUIStrings();
+            } else {
+                alert(currentLang === 'ar' ? 'كلمة مرور خاطئة' : 'Wrong password');
+            }
+        }
+
+        // Category Logic
+        function renderCategories() {
+            const container = document.getElementById('categoryTabs');
+            const list = categories[currentLang];
+            container.innerHTML = list.map((cat, index) => `
+                <button onclick="setCategory('${cat}')" class="px-5 py-2 rounded-full text-sm font-semibold transition-all ${currentCategory === (index === 0 ? 'all' : cat) ? 'bg-blue-600 text-white' : 'bg-gray-100 dark:bg-slate-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-slate-700'}">
+                    ${cat}
+                </button>
+            `).join('');
+        }
+
+        function populateCategorySelect() {
+            const select = document.getElementById('prodCat');
+            const list = categories[currentLang].slice(1);
+            select.innerHTML = list.map(cat => `<option value="${cat}">${cat}</option>`).join('');
+        }
+
+        function setCategory(cat) {
+            currentCategory = (cat === categories[currentLang][0]) ? 'all' : cat;
+            renderCategories();
+            filterProducts();
+        }
+
+        // Product Logic
+        async function saveProduct() {
+            const name = document.getElementById('prodName').value;
+            const desc = document.getElementById('prodDesc').value;
+            const cat = document.getElementById('prodCat').value;
+            const stock = document.getElementById('prodStock').value || 0;
+            const file = document.getElementById('prodImg').files[0];
+
+            if (!name || !desc || !file) {
+                alert(currentLang === 'ar' ? 'يرجى ملء جميع الحقول' : 'Please fill all fields');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const newProduct = {
+                    id: Date.now(),
+                    name,
+                    desc,
+                    cat,
+                    stock,
+                    img: e.target.result
+                };
+                products.push(newProduct);
+                localStorage.setItem('poptop_products', JSON.stringify(products));
+                alert(currentLang === 'ar' ? 'تم النشر بنجاح' : 'Published successfully');
+                
+                // Clear inputs
+                document.getElementById('prodName').value = '';
+                document.getElementById('prodDesc').value = '';
+                document.getElementById('prodImg').value = '';
+                document.getElementById('prodStock').value = '';
+                
+                renderAdminProducts();
+                renderProducts();
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function deleteProduct(id) {
+            if (confirm(currentLang === 'ar' ? 'هل أنت متأكد؟' : 'Are you sure?')) {
+                products = products.filter(p => p.id !== id);
+                localStorage.setItem('poptop_products', JSON.stringify(products));
+                renderAdminProducts();
+                renderProducts();
+            }
+        }
+
+        function filterProducts() {
+            const term = document.getElementById('searchInput').value.toLowerCase();
+            const filtered = products.filter(p => {
+                const matchesCat = currentCategory === 'all' || p.cat === currentCategory;
+                const matchesSearch = p.name.toLowerCase().includes(term) || p.desc.toLowerCase().includes(term);
+                return matchesCat && matchesSearch;
+            });
+            renderProductGrid(filtered);
+        }
+
+        function renderProducts() {
+            filterProducts();
+        }
+
+        function renderProductGrid(items) {
+            const grid = document.getElementById('productsGrid');
+            const empty = document.getElementById('emptyState');
+            
+            if (items.length === 0) {
+                grid.classList.add('hidden');
+                empty.classList.remove('hidden');
+                return;
+            }
+
+            grid.classList.remove('hidden');
+            empty.classList.add('hidden');
+
+            grid.innerHTML = items.map(p => `
+                <div class="animate-fade group relative rounded-3xl overflow-hidden border transition-all hover:shadow-2xl ${document.getElementById('bodyTag').classList.contains('dark-mode') ? 'card-dark' : 'card-light'}">
+                    <div class="relative overflow-hidden">
+                        <img src="${p.img}" class="product-img w-full transition-transform duration-500 group-hover:scale-110">
+                        <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-4">
+                            <button onclick="openModal('${p.img}')" class="bg-white/20 backdrop-blur-md p-3 rounded-full text-white hover:bg-white/40"><i class="fas fa-eye"></i></button>
+                        </div>
+                    </div>
+                    <div class="p-5">
+                        <div class="flex justify-between items-start mb-1">
+                            <span class="text-xs font-bold text-blue-600 dark:text-blue-400 uppercase tracking-wider">${p.cat}</span>
+                            <span class="text-[10px] font-bold bg-blue-100 dark:bg-blue-900/30 px-2 py-0.5 rounded text-blue-700 dark:text-blue-300">
+                                ${translations[currentLang].stockLabel} ${p.stock || 0}
+                            </span>
+                        </div>
+                        <h3 class="text-xl font-bold mt-1 mb-2">${p.name}</h3>
+                        <p class="text-gray-500 dark:text-gray-400 text-sm line-clamp-2 mb-4">${p.desc}</p>
+                        <a href="https://wa.me/201116723666?text=${encodeURIComponent(translations[currentLang].whatsappMsg)}" target="_blank" class="w-full flex items-center justify-center gap-2 bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded-xl transition-all">
+                            <i class="fab fa-whatsapp text-lg"></i>
+                            <span>WhatsApp</span>
+                        </a>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderAdminProducts() {
+            const container = document.getElementById('adminProductsList');
+            container.innerHTML = products.map(p => `
+                <div class="flex items-center gap-4 p-4 rounded-xl border dark:bg-slate-900 dark:border-slate-700">
+                    <img src="${p.img}" class="w-16 h-16 rounded-lg object-cover">
+                    <div class="flex-1">
+                        <h4 class="font-bold">${p.name}</h4>
+                        <p class="text-xs text-gray-500">${p.cat}</p>
+                    </div>
+                    <button onclick="deleteProduct(${p.id})" class="text-red-500 p-2 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        // About & Other Utils
+        async function saveAbout() {
+            const guide = document.getElementById('usageGuide').value;
+            const photoFile = document.getElementById('aboutPhotoInput').files[0];
+
+            if (photoFile) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    aboutData.photo = e.target.result;
+                    finalizeAboutSave(guide);
+                };
+                reader.readAsDataURL(photoFile);
+            } else {
+                finalizeAboutSave(guide);
+            }
+        }
+
+        function finalizeAboutSave(guide) {
+            aboutData.guide = guide;
+            localStorage.setItem('poptop_about', JSON.stringify(aboutData));
+            updateAboutDisplay();
+            alert(currentLang === 'ar' ? 'تم الحفظ بنجاح' : 'Saved successfully');
+        }
+
+        function updateAboutDisplay() {
+            if (aboutData.photo) {
+                document.getElementById('displayAboutImg').src = aboutData.photo;
+            }
+            document.getElementById('displayUsage').innerText = aboutData.guide;
+            document.getElementById('usageGuide').value = aboutData.guide;
+        }
+
+        function toggleAbout() {
+            const panel = document.getElementById('aboutPanel');
+            panel.classList.toggle('-translate-x-full');
+        }
+
+        function openModal(src) {
+            document.getElementById('modalImg').src = src;
+            document.getElementById('imageModal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('imageModal').classList.add('hidden');
+        }
+
+        // Initial setup
+        init();
+    </script>
+</body>
+</html>
