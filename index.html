@@ -210,6 +210,7 @@
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">كلمة المرور</label>
                         <input type="password" id="login-password" required class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
                     </div>
+
                     <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition duration-200 shadow-md">
                         دخول
                     </button>
@@ -239,13 +240,13 @@
                     <!-- Admin Toggle -->
                     <div class="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg border border-gray-200 dark:border-gray-700">
                         <input type="checkbox" id="reg-is-admin" onchange="document.getElementById('admin-code-field').classList.toggle('hidden')" class="w-5 h-5 text-blue-600 rounded focus:ring-blue-500">
-                        <label for="reg-is-admin" class="text-sm font-medium text-gray-700 dark:text-gray-300 select-none cursor-pointer" data-translate="admin_question">هل أنت مسؤول (Admin)؟</label>
+                        <label for="reg-is-admin" class="text-sm font-medium text-gray-700 dark:text-gray-300 select-none cursor-pointer">هل أنت مسؤول (Admin)؟</label>
                     </div>
 
                     <div id="admin-code-field" class="hidden">
-                        <label class="block text-sm font-medium text-red-600 dark:text-red-400 mb-1" data-translate="admin_code_label">كود المسؤول (مطلوب)</label>
-                        <input type="password" id="reg-admin-code" placeholder="••••••" class="w-full px-4 py-2 border border-red-300 rounded-lg focus:ring-2 focus:ring-red-500 dark:bg-gray-700 dark:border-red-900/50 dark:text-white">
-                        <p class="text-xs text-gray-400 mt-1 italic" data-translate="admin_code_hint">أدخل الكود السري</p>
+                        <label class="block text-sm font-medium text-red-600 dark:text-red-400 mb-1">كود العامل (من المالك)</label>
+                        <input type="password" id="reg-admin-code" placeholder="أدخل الكود الذي أعطاه لك المالك" class="w-full px-4 py-2 border border-red-300 rounded-lg focus:ring-2 focus:ring-red-500 dark:bg-gray-700 dark:border-red-900/50 dark:text-white">
+                        <p class="text-xs text-gray-400 mt-1 italic">سيتم تحديد صلاحيتك تلقائياً بناءً على هذا الكود</p>
                     </div>
 
                     <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg transition duration-200 shadow-md">
@@ -267,12 +268,18 @@
                     </h2>
                     <p class="text-gray-500 mt-1">إدارة المنتجات، المخزون، والمبيعات</p>
                 </div>
-                <div class="flex gap-2 bg-white dark:bg-gray-800 p-1 rounded-lg border border-gray-200 dark:border-gray-700">
-                    <button onclick="app.switchDashTab('products')" id="tab-btn-products" class="px-4 py-2 rounded-md text-sm font-medium transition bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300">المنتجات</button>
-                    <button onclick="app.switchDashTab('add')" id="tab-btn-add" class="px-4 py-2 rounded-md text-sm font-medium transition hover:bg-gray-100 dark:hover:bg-gray-700">إضافة منتج</button>
-                    <button onclick="app.switchDashTab('sales')" id="tab-btn-sales" class="px-4 py-2 rounded-md text-sm font-medium transition hover:bg-gray-100 dark:hover:bg-gray-700">المبيعات</button>
-                    <button onclick="app.switchDashTab('reports')" id="tab-btn-reports" class="px-4 py-2 rounded-md text-sm font-medium transition hover:bg-gray-100 dark:hover:bg-gray-700">الإبلاغات</button>
-                    <button onclick="app.switchDashTab('settings')" id="tab-btn-settings" class="px-4 py-2 rounded-md text-sm font-medium transition hover:bg-gray-100 dark:hover:bg-gray-700">الإعدادات</button>
+                <div class="flex gap-2 bg-white dark:bg-gray-800 p-1 rounded-lg border border-gray-200 dark:border-gray-700 overflow-x-auto">
+                    <button onclick="app.switchDashTab('products')" id="tab-btn-products" class="px-4 py-2 rounded-md text-sm font-medium transition bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300 whitespace-nowrap">المنتجات</button>
+                    <button onclick="app.switchDashTab('add')" id="tab-btn-add" class="px-4 py-2 rounded-md text-sm font-medium transition hover:bg-gray-100 dark:hover:bg-gray-700 whitespace-nowrap">إضافة منتج</button>
+                    <button onclick="app.switchDashTab('sales')" id="tab-btn-sales" class="px-4 py-2 rounded-md text-sm font-medium transition hover:bg-gray-100 dark:hover:bg-gray-700 whitespace-nowrap">المبيعات</button>
+                    <button onclick="app.switchDashTab('reports')" id="tab-btn-reports" class="px-4 py-2 rounded-md text-sm font-medium transition hover:bg-gray-100 dark:hover:bg-gray-700 whitespace-nowrap">الإبلاغات</button>
+                    <button onclick="app.switchDashTab('notifications')" id="tab-btn-notifications" class="hidden px-4 py-2 rounded-md text-sm font-medium transition hover:bg-gray-100 dark:hover:bg-gray-700 whitespace-nowrap relative">
+                        الإشعارات
+                        <span id="notif-badge" class="hidden absolute -top-1 -left-1 bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center"></span>
+                    </button>
+                    <button onclick="app.switchDashTab('my-rating')" id="tab-btn-my-rating" class="hidden px-4 py-2 rounded-md text-sm font-medium transition hover:bg-gray-100 dark:hover:bg-gray-700 whitespace-nowrap">تقييماتي</button>
+                    <button onclick="app.switchDashTab('change-password')" id="tab-btn-change-password" class="px-4 py-2 rounded-md text-sm font-medium transition hover:bg-gray-100 dark:hover:bg-gray-700 whitespace-nowrap">تغيير كلمة المرور</button>
+                    <button onclick="app.switchDashTab('settings')" id="tab-btn-settings" class="px-4 py-2 rounded-md text-sm font-medium transition hover:bg-gray-100 dark:hover:bg-gray-700 whitespace-nowrap">الإعدادات</button>
                 </div>
             </div>
 
@@ -434,6 +441,70 @@
                             حفظ التعديلات
                         </button>
                     </form>
+                </div>
+            </div>
+
+            <!-- Dashboard: Notifications (Owner Only) -->
+            <div id="dash-tab-notifications" class="dash-tab-content hidden">
+                <div class="bg-white dark:bg-gray-800 shadow-md rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700">
+                    <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
+                        <h3 class="font-bold text-gray-800 dark:text-gray-200">سجل تسجيلات الدخول</h3>
+                        <button onclick="app.clearNotifications()" class="text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 px-3 py-1 rounded text-sm">
+                            <i class="fa-solid fa-trash-can ml-1"></i> مسح الكل
+                        </button>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm text-right">
+                            <thead class="bg-gray-50 dark:bg-gray-700/50 text-gray-700 dark:text-gray-300">
+                                <tr>
+                                    <th class="px-6 py-3">المستخدم</th>
+                                    <th class="px-6 py-3">الدور</th>
+                                    <th class="px-6 py-3">وقت الدخول</th>
+                                </tr>
+                            </thead>
+                            <tbody id="notifications-table" class="divide-y divide-gray-200 dark:divide-gray-700 text-gray-600 dark:text-gray-300">
+                                <!-- Populated by JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dashboard: Change Password -->
+            <div id="dash-tab-change-password" class="dash-tab-content hidden max-w-2xl mx-auto">
+                <div class="bg-white dark:bg-gray-800 shadow-md rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+                    <h3 class="text-xl font-bold mb-4 dark:text-white">تغيير كلمة المرور</h3>
+                    <form onsubmit="app.handleChangePassword(event)" class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium mb-1 dark:text-gray-300">كلمة المرور الحالية</label>
+                            <input type="password" id="current-password" required class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-1 dark:text-gray-300">كلمة المرور الجديدة</label>
+                            <input type="password" id="new-password" required class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-1 dark:text-gray-300">تأكيد كلمة المرور</label>
+                            <input type="password" id="confirm-password" required class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                        </div>
+                        <button type="submit" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 rounded-lg shadow-md transition">
+                            طلب التغيير
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+
+
+            <!-- Dashboard: My Rating (Employee/Assistant Only) -->
+            <div id="dash-tab-my-rating" class="dash-tab-content hidden max-w-2xl mx-auto">
+                <div class="bg-white dark:bg-gray-800 shadow-md rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+                    <h3 class="text-xl font-bold mb-4 dark:text-white flex items-center gap-2">
+                        <i class="fa-solid fa-chart-line text-yellow-500"></i> تقييماتي
+                    </h3>
+                    <div id="my-ratings-container" class="space-y-4">
+                        <!-- Populated by JS -->
+                    </div>
                 </div>
             </div>
         </section>
@@ -652,8 +723,8 @@
         ];
         
         const ADMIN_CODES = {
-            OWNER: "151182",
-            ASSISTANT: "2268865"
+            OWNER_AHMED: "151182",
+            OWNER_MAHMOUD: "787899#"
         };
 
         const WHATSAPP_NUMBER = "201116723666";
@@ -766,6 +837,10 @@
                 sales: [],
                 reviews: [],
                 reports: [],
+                passwordRequests: [],
+                employeeRatings: [],
+                invites: [], // Store generated access codes
+                loginNotifications: [], // Track all logins for owner
                 settings: {
                     aboutImg: null,
                     ceoImg: null,
@@ -787,8 +862,14 @@
                 this.checkDeliveryStatus();
                 this.applyTranslations();
                 
-                // Initial View
-                this.navTo('home');
+                // Force Login Check
+                if (!this.data.currentUser) {
+                    this.navTo('login');
+                    this.showToast('يجب تسجيل الدخول أولاً', 'info');
+                } else {
+                    // Initial View
+                    this.navTo('home');
+                }
             },
 
             loadData() {
@@ -856,6 +937,19 @@
 
             // --- Navigation ---
             navTo(viewId) {
+                // Force Login - Block all pages except login/register
+                if (!this.data.currentUser && viewId !== 'login' && viewId !== 'register') {
+                    this.showToast('يجب تسجيل الدخول أولاً', 'error');
+                    // Hide all views and show login
+                    document.querySelectorAll('main > section').forEach(el => el.classList.add('hidden'));
+                    const loginView = document.getElementById('view-login');
+                    if (loginView) {
+                        loginView.classList.remove('hidden');
+                        window.scrollTo({top: 0, behavior: 'smooth'});
+                    }
+                    return;
+                }
+                
                 // Permissions check
                 if (viewId === 'dashboard' && (!this.data.currentUser || !this.data.currentUser.isAdmin)) {
                     this.showToast('غير مصرح لك بالدخول هنا', 'error');
@@ -880,6 +974,7 @@
 
                 // Refresh specific views
                 if (viewId === 'dashboard') {
+                    this.updateDashboardTabs(); // Update visible tabs
                     this.switchDashTab('products'); // Default tab
                 }
                 if (viewId === 'about') {
@@ -892,7 +987,7 @@
                 e.preventDefault();
                 const username = document.getElementById('reg-username').value.trim();
                 const password = document.getElementById('reg-password').value.trim();
-                const isAdmin = document.getElementById('reg-is-admin').checked;
+                const isWorker = document.getElementById('reg-is-admin').checked;
                 const adminCode = document.getElementById('reg-admin-code').value.trim();
 
                 if (this.data.users.find(u => u.username === username)) {
@@ -901,12 +996,23 @@
                 }
 
                 let role = 'user';
-                if (isAdmin) {
-                    if (adminCode === ADMIN_CODES.OWNER) role = 'owner';
-                    else if (adminCode === ADMIN_CODES.ASSISTANT) role = 'assistant';
+                let inviteUsed = null;
+
+                if (isWorker) {
+                    // Check if it's an Owner Code
+                    if (adminCode === ADMIN_CODES.OWNER_AHMED || adminCode === ADMIN_CODES.OWNER_MAHMOUD) {
+                        role = 'owner';
+                    } 
+                    // Check if it's a generated Invite Code
                     else {
-                        this.showToast('كود المسؤول غير صحيح', 'error');
-                        return;
+                        const invite = this.data.invites.find(i => i.code === adminCode);
+                        if (invite) {
+                            role = invite.role;
+                            inviteUsed = invite.id;
+                        } else {
+                            this.showToast('كود العامل غير صحيح', 'error');
+                            return;
+                        }
                     }
                 }
 
@@ -915,9 +1021,19 @@
                     username, 
                     password, 
                     role, 
-                    isAdmin: role !== 'user'
+                    isAdmin: role !== 'user',
+                    // Default photo based on name
+                    photo: 'https://ui-avatars.com/api/?name=' + encodeURIComponent(username) + '&background=3b82f6&color=fff&size=128',
+                    fullname: username, // Default fullname
+                    lastSeen: null,
+                    workerCode: role !== 'user' ? adminCode : null // Save the code for login verification
                 };
                 
+                // Remove used invite
+                if (inviteUsed) {
+                    this.data.invites = this.data.invites.filter(i => i.id !== inviteUsed);
+                }
+
                 this.data.users.push(newUser);
                 this.saveData();
                 this.showToast('تم إنشاء الحساب بنجاح', 'success');
@@ -935,7 +1051,28 @@
                     // Create session with Login Time for Free Delivery
                     const sessionUser = { ...user, loginTime: Date.now() };
                     this.data.currentUser = sessionUser;
-                    sessionStorage.setItem('poptop_session', JSON.stringify(sessionUser));
+                    localStorage.setItem('poptop_session', JSON.stringify(sessionUser));
+                    
+                    // Update last seen for employees
+                    if (user.isAdmin) {
+                        const dbUser = this.data.users.find(u => u.id === user.id);
+                        if (dbUser) {
+                            dbUser.lastSeen = Date.now();
+                            this.saveData();
+                        }
+                        // Set interval to update activity every minute
+                        setInterval(() => this.updateUserActivity(), 60000);
+                    }
+                    
+                    // Log Login Notification for Owners
+                    this.data.loginNotifications.push({
+                        id: Date.now(),
+                        username: user.username,
+                        fullname: user.fullname || user.username,
+                        role: user.role || 'user',
+                        timestamp: Date.now()
+                    });
+                    this.saveData();
                     
                     this.updateAuthUI();
                     
@@ -1053,15 +1190,168 @@
                     btn.classList.add('hover:bg-gray-100', 'dark:hover:bg-gray-700');
                 });
                 const activeBtn = document.getElementById(`tab-btn-${tabName}`);
-                activeBtn.classList.add('bg-purple-100', 'text-purple-700', 'dark:bg-purple-900/30', 'dark:text-purple-300');
-                activeBtn.classList.remove('hover:bg-gray-100', 'dark:hover:bg-gray-700');
+                if (activeBtn) {
+                    activeBtn.classList.add('bg-purple-100', 'text-purple-700', 'dark:bg-purple-900/30', 'dark:text-purple-300');
+                    activeBtn.classList.remove('hover:bg-gray-100', 'dark:hover:bg-gray-700');
+                }
 
                 // Logic Refresh
                 if (tabName === 'products') this.renderDashProducts();
                 if (tabName === 'add') this.populateCatDropdown('prod-cat');
                 if (tabName === 'sales') this.renderSalesStats();
                 if (tabName === 'reports') this.renderDashReports();
+                if (tabName === 'notifications') this.renderNotifications();
                 if (tabName === 'settings') this.loadSettingsForm();
+                if (tabName === 'employees') { this.renderEmployees(); this.renderInvites(); }
+                if (tabName === 'password-requests') this.renderPasswordRequests();
+                if (tabName === 'my-rating') this.renderMyRatings();
+            },
+
+            // --- Invites Management ---
+            handleCreateInvite(e) {
+                e.preventDefault();
+                const role = document.getElementById('invite-role').value;
+                const code = document.getElementById('invite-code').value.trim();
+
+                if (!code) return;
+
+                // Check duplicates
+                if (this.data.invites.find(i => i.code === code)) {
+                    this.showToast('هذا الكود موجود بالفعل', 'error');
+                    return;
+                }
+
+                this.data.invites.push({
+                    id: Date.now(),
+                    code,
+                    role,
+                    createdBy: this.data.currentUser.username
+                });
+
+                this.saveData();
+                this.showToast('تم إنشاء الكود بنجاح', 'success');
+                document.getElementById('invite-code').value = '';
+                this.renderInvites();
+            },
+
+            renderInvites() {
+                const list = document.getElementById('active-invites-list');
+                if (!list) return; // Guard clause
+                
+                list.innerHTML = '';
+                
+                if (this.data.invites.length === 0) {
+                    list.innerHTML = '<li class="text-gray-400 italic">لا توجد أكواد نشطة</li>';
+                    return;
+                }
+
+                this.data.invites.forEach(inv => {
+                    const li = document.createElement('li');
+                    li.className = "flex justify-between items-center bg-gray-50 dark:bg-gray-700/50 p-2 rounded border border-gray-200 dark:border-gray-600";
+                    
+                    const roleText = inv.role === 'assistant' ? 'أدمن' : 'عامل عادي';
+                    
+                    li.innerHTML = `
+                        <div>
+                            <span class="font-mono font-bold text-blue-600 dark:text-blue-400 text-lg mx-2">${inv.code}</span>
+                            <span class="text-xs bg-gray-200 dark:bg-gray-600 px-2 py-0.5 rounded">${roleText}</span>
+                        </div>
+                        <button onclick="app.deleteInvite(${inv.id})" class="text-red-500 hover:bg-red-100 p-1 rounded transition">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                    `;
+                    list.appendChild(li);
+                });
+            },
+
+            deleteInvite(id) {
+                this.data.invites = this.data.invites.filter(i => i.id !== id);
+                this.saveData();
+                this.renderInvites();
+            },
+
+            updateDashboardTabs() {
+                const user = this.data.currentUser;
+                if (!user) return;
+
+                // Show/Hide tabs based on role
+                const myRatingBtn = document.getElementById('tab-btn-my-rating');
+                const notificationsBtn = document.getElementById('tab-btn-notifications');
+
+                if (user.role === 'owner') {
+                    myRatingBtn.classList.add('hidden');
+                    notificationsBtn.classList.remove('hidden');
+                    this.updateNotificationBadge();
+                } else if (user.role === 'assistant' || user.role === 'employee') {
+                    myRatingBtn.classList.remove('hidden');
+                    notificationsBtn.classList.add('hidden');
+                } else {
+                    myRatingBtn.classList.add('hidden');
+                    notificationsBtn.classList.add('hidden');
+                }
+            },
+
+            updateNotificationBadge() {
+                const badge = document.getElementById('notif-badge');
+                const count = this.data.loginNotifications.length;
+                if (badge) {
+                    if (count > 0) {
+                        badge.textContent = count > 99 ? '99+' : count;
+                        badge.classList.remove('hidden');
+                    } else {
+                        badge.classList.add('hidden');
+                    }
+                }
+            },
+
+            renderNotifications() {
+                const tbody = document.getElementById('notifications-table');
+                tbody.innerHTML = '';
+
+                if (this.data.loginNotifications.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="3" class="px-6 py-4 text-center text-gray-500">لا توجد إشعارات</td></tr>';
+                    return;
+                }
+
+                const roleNames = {
+                    owner: 'مالك',
+                    assistant: 'أدمن',
+                    employee: 'عامل',
+                    user: 'مستخدم'
+                };
+
+                [...this.data.loginNotifications].reverse().forEach(notif => {
+                    const tr = document.createElement('tr');
+                    const date = new Date(notif.timestamp).toLocaleString('ar-EG');
+                    
+                    const roleClass = {
+                        owner: 'bg-red-100 text-red-800 dark:bg-red-900/30',
+                        assistant: 'bg-purple-100 text-purple-800 dark:bg-purple-900/30',
+                        employee: 'bg-blue-100 text-blue-800 dark:bg-blue-900/30',
+                        user: 'bg-gray-100 text-gray-800 dark:bg-gray-700'
+                    };
+                    
+                    tr.innerHTML = `
+                        <td class="px-6 py-4 font-medium">${notif.fullname}</td>
+                        <td class="px-6 py-4">
+                            <span class="px-2 py-1 rounded text-xs font-bold ${roleClass[notif.role] || roleClass.user}">
+                                ${roleNames[notif.role] || 'مستخدم'}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 text-xs">${date}</td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            },
+
+            clearNotifications() {
+                if (confirm('هل تريد مسح جميع الإشعارات؟')) {
+                    this.data.loginNotifications = [];
+                    this.saveData();
+                    this.renderNotifications();
+                    this.updateNotificationBadge();
+                    this.showToast('تم مسح الإشعارات', 'info');
+                }
             },
 
             // Add Product
@@ -1604,6 +1894,314 @@
                 } else {
                     adminSection.classList.add('hidden');
                 }
+            },
+
+            // --- Password Management ---
+            handleChangePassword(e) {
+                e.preventDefault();
+                const current = document.getElementById('current-password').value;
+                const newPass = document.getElementById('new-password').value;
+                const confirm = document.getElementById('confirm-password').value;
+
+                if (current !== this.data.currentUser.password) {
+                    this.showToast('كلمة المرور الحالية غير صحيحة', 'error');
+                    return;
+                }
+
+                if (newPass !== confirm) {
+                    this.showToast('كلمات المرور غير متطابقة', 'error');
+                    return;
+                }
+
+                // If Owner, change directly
+                if (this.data.currentUser.role === 'owner') {
+                    const user = this.data.users.find(u => u.id === this.data.currentUser.id);
+                    if (user) {
+                        user.password = newPass;
+                        this.data.currentUser.password = newPass;
+                        localStorage.setItem('poptop_session', JSON.stringify(this.data.currentUser));
+                        this.saveData();
+                        this.showToast('تم تغيير كلمة المرور بنجاح', 'success');
+                        e.target.reset();
+                    }
+                } else {
+                    // Request approval from owner
+                    const request = {
+                        id: Date.now(),
+                        userId: this.data.currentUser.id,
+                        username: this.data.currentUser.username,
+                        newPassword: newPass,
+                        status: 'pending',
+                        date: Date.now()
+                    };
+                    this.data.passwordRequests.push(request);
+                    this.saveData();
+                    this.showToast('تم إرسال طلب التغيير للمالك', 'info');
+                    e.target.reset();
+                }
+            },
+
+            renderPasswordRequests() {
+                const tbody = document.getElementById('password-requests-table');
+                tbody.innerHTML = '';
+                
+                const pending = this.data.passwordRequests.filter(r => r.status === 'pending');
+                document.getElementById('password-requests-count').textContent = pending.length;
+
+                if (this.data.passwordRequests.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="4" class="px-6 py-4 text-center text-gray-500">لا توجد طلبات</td></tr>';
+                    return;
+                }
+
+                [...this.data.passwordRequests].reverse().forEach(req => {
+                    const tr = document.createElement('tr');
+                    const date = new Date(req.date).toLocaleDateString('ar-EG');
+                    const statusColors = {
+                        pending: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30',
+                        approved: 'bg-green-100 text-green-800 dark:bg-green-900/30',
+                        rejected: 'bg-red-100 text-red-800 dark:bg-red-900/30'
+                    };
+                    
+                    tr.innerHTML = `
+                        <td class="px-6 py-4 font-medium">${req.username}</td>
+                        <td class="px-6 py-4 text-xs">${date}</td>
+                        <td class="px-6 py-4"><span class="px-2 py-1 rounded text-xs font-bold ${statusColors[req.status]}">${req.status}</span></td>
+                        <td class="px-6 py-4">
+                            ${req.status === 'pending' ? `
+                                <button onclick="app.approvePasswordChange(${req.id})" class="text-green-600 hover:text-green-800 ml-2" title="موافقة">
+                                    <i class="fa-solid fa-check"></i>
+                                </button>
+                                <button onclick="app.rejectPasswordChange(${req.id})" class="text-red-600 hover:text-red-800" title="رفض">
+                                    <i class="fa-solid fa-xmark"></i>
+                                </button>
+                            ` : '-'}
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            },
+
+            approvePasswordChange(reqId) {
+                const req = this.data.passwordRequests.find(r => r.id === reqId);
+                if (req) {
+                    const user = this.data.users.find(u => u.id === req.userId);
+                    if (user) {
+                        user.password = req.newPassword;
+                        req.status = 'approved';
+                        this.saveData();
+                        this.showToast('تمت الموافقة على تغيير كلمة المرور', 'success');
+                        this.renderPasswordRequests();
+                    }
+                }
+            },
+
+            rejectPasswordChange(reqId) {
+                const req = this.data.passwordRequests.find(r => r.id === reqId);
+                if (req) {
+                    req.status = 'rejected';
+                    this.saveData();
+                    this.showToast('تم رفض الطلب', 'info');
+                    this.renderPasswordRequests();
+                }
+            },
+
+            // --- Employee Management ---
+
+            renderEmployees() {
+                const tbody = document.getElementById('employees-table');
+                tbody.innerHTML = '';
+
+                // Populate rate select
+                const rateSelect = document.getElementById('rate-emp-select');
+                rateSelect.innerHTML = '<option value="">-- اختر موظف --</option>';
+
+                const employees = this.data.users.filter(u => u.role === 'employee' || u.role === 'assistant');
+
+                if (employees.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="6" class="px-6 py-4 text-center text-gray-500">لا يوجد موظفين</td></tr>';
+                    return;
+                }
+
+                employees.forEach(emp => {
+                    // Add to select
+                    const opt = document.createElement('option');
+                    opt.value = emp.id;
+                    opt.textContent = emp.fullname || emp.username;
+                    rateSelect.appendChild(opt);
+
+                    // Check Online Status
+                    const isOnline = this.isEmployeeOnline(emp.id);
+                    const statusClass = isOnline ? 'bg-green-100 text-green-800 dark:bg-green-900/30' : 'bg-gray-100 text-gray-600 dark:bg-gray-700';
+                    const statusText = isOnline ? 'متصل' : 'غير متصل';
+                    const statusIcon = isOnline ? 'fa-circle text-green-500' : 'fa-circle text-gray-400';
+
+                    // Table row
+                    const tr = document.createElement('tr');
+                    const roleText = emp.role === 'assistant' ? 'أدمن' : 'عامل عادي';
+                    const avgRating = this.getEmployeeAverageRating(emp.id);
+                    const photo = emp.photo || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(emp.fullname || emp.username) + '&background=3b82f6&color=fff&size=128';
+                    
+                    tr.innerHTML = `
+                        <td class="px-6 py-4">
+                            <div class="flex items-center gap-3">
+                                <img src="${photo}" alt="${emp.fullname || emp.username}" class="w-10 h-10 rounded-full object-cover border-2 border-gray-200 dark:border-gray-600">
+                                <div>
+                                    <div class="font-bold text-gray-900 dark:text-white">${emp.fullname || emp.username}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 font-medium">${emp.username}</td>
+                        <td class="px-6 py-4">
+                            <span class="px-2 py-1 rounded text-xs font-bold ${emp.role === 'assistant' ? 'bg-purple-100 text-purple-800 dark:bg-purple-900/30' : 'bg-blue-100 text-blue-800 dark:bg-blue-900/30'}">${roleText}</span>
+                        </td>
+                        <td class="px-6 py-4">
+                            <span class="px-2 py-1 rounded text-xs font-bold ${statusClass} flex items-center gap-1 w-fit">
+                                <i class="fa-solid ${statusIcon} text-xs"></i>
+                                ${statusText}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4">
+                            <span class="text-yellow-500 font-bold">${avgRating ? avgRating.toFixed(1) + ' ★' : 'لا يوجد'}</span>
+                        </td>
+                        <td class="px-6 py-4">
+                            <button onclick="app.toggleEmployeeRole(${emp.id})" class="text-blue-600 hover:text-blue-800 ml-2" title="تغيير الدور">
+                                <i class="fa-solid fa-arrows-rotate"></i>
+                            </button>
+                            <button onclick="app.deleteEmployee(${emp.id})" class="text-red-600 hover:text-red-800" title="حذف">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            },
+
+            toggleEmployeeRole(empId) {
+                const emp = this.data.users.find(u => u.id === empId);
+                if (emp) {
+                    emp.role = emp.role === 'assistant' ? 'employee' : 'assistant';
+                    this.saveData();
+                    this.showToast('تم تغيير الدور الوظيفي', 'success');
+                    this.renderEmployees();
+                }
+            },
+
+            deleteEmployee(empId) {
+                if (confirm('هل أنت متأكد من حذف هذا الموظف؟')) {
+                    this.data.users = this.data.users.filter(u => u.id !== empId);
+                    this.saveData();
+                    this.showToast('تم حذف الموظف', 'info');
+                    this.renderEmployees();
+                }
+            },
+
+            handleRateEmployee(e) {
+                e.preventDefault();
+                const empId = parseInt(document.getElementById('rate-emp-select').value);
+                const rating = parseInt(document.getElementById('rate-value').value);
+                const comment = document.getElementById('rate-comment').value.trim();
+
+                if (!empId) {
+                    this.showToast('اختر موظف أولاً', 'error');
+                    return;
+                }
+
+                const newRating = {
+                    id: Date.now(),
+                    employeeId: empId,
+                    rating,
+                    comment,
+                    date: Date.now(),
+                    week: this.getCurrentWeek()
+                };
+
+                this.data.employeeRatings.push(newRating);
+                this.saveData();
+                this.showToast('تم حفظ التقييم', 'success');
+                e.target.reset();
+                this.renderEmployees();
+            },
+
+            getCurrentWeek() {
+                const now = new Date();
+                const start = new Date(now.getFullYear(), 0, 1);
+                const diff = now - start;
+                const oneWeek = 1000 * 60 * 60 * 24 * 7;
+                return Math.floor(diff / oneWeek);
+            },
+
+            getEmployeeAverageRating(empId) {
+                const ratings = this.data.employeeRatings.filter(r => r.employeeId === empId);
+                if (ratings.length === 0) return null;
+                const sum = ratings.reduce((acc, r) => acc + r.rating, 0);
+                return sum / ratings.length;
+            },
+
+            isEmployeeOnline(empId) {
+                // Check if employee is currently logged in
+                const activeSessions = this.data.users.filter(u => u.id === empId && u.lastSeen);
+                if (activeSessions.length === 0) return false;
+                
+                const emp = this.data.users.find(u => u.id === empId);
+                if (!emp || !emp.lastSeen) return false;
+                
+                // Consider online if last activity within 5 minutes
+                const fiveMinutes = 5 * 60 * 1000;
+                return (Date.now() - emp.lastSeen) < fiveMinutes;
+            },
+
+            updateUserActivity() {
+                if (this.data.currentUser && this.data.currentUser.isAdmin) {
+                    const user = this.data.users.find(u => u.id === this.data.currentUser.id);
+                    if (user) {
+                        user.lastSeen = Date.now();
+                        this.saveData();
+                    }
+                }
+            },
+
+            renderMyRatings() {
+                const container = document.getElementById('my-ratings-container');
+                container.innerHTML = '';
+
+                const myRatings = this.data.employeeRatings.filter(r => r.employeeId === this.data.currentUser.id);
+
+                if (myRatings.length === 0) {
+                    container.innerHTML = `
+                        <div class="bg-gray-100 dark:bg-gray-700/50 rounded-xl p-8 text-center">
+                            <i class="fa-solid fa-star text-4xl text-gray-400 mb-3"></i>
+                            <p class="text-gray-500 dark:text-gray-400">لا توجد تقييمات حتى الآن</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                const avgRating = this.getEmployeeAverageRating(this.data.currentUser.id);
+
+                // Average Card
+                const avgCard = document.createElement('div');
+                avgCard.className = "bg-gradient-to-br from-yellow-400 to-orange-500 text-white rounded-xl p-6 text-center";
+                avgCard.innerHTML = `
+                    <div class="text-5xl font-bold mb-2">${avgRating.toFixed(1)}</div>
+                    <div class="text-lg">متوسط التقييم</div>
+                    <div class="text-yellow-200 text-2xl mt-2">${'★'.repeat(Math.round(avgRating))}</div>
+                `;
+                container.appendChild(avgCard);
+
+                // Individual Ratings
+                [...myRatings].reverse().forEach(rating => {
+                    const date = new Date(rating.date).toLocaleDateString('ar-EG');
+                    const card = document.createElement('div');
+                    card.className = "bg-white dark:bg-gray-800 rounded-xl p-4 border border-gray-200 dark:border-gray-700";
+                    card.innerHTML = `
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="text-sm text-gray-500 dark:text-gray-400">${date}</span>
+                            <span class="text-yellow-500 font-bold text-lg">${rating.rating} ★</span>
+                        </div>
+                        ${rating.comment ? `<p class="text-gray-700 dark:text-gray-300">${rating.comment}</p>` : ''}
+                    `;
+                    container.appendChild(card);
+                });
             }
         };
 
